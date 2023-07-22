@@ -18,57 +18,38 @@ $(document).ready(function () {
     var searchCardType = $("#card_type").val();
     var searchCardColor = $("#card_color").val();
 
-    $("#results-row").text("");
+    $("#results tbody").text("");
 
     let page = 1;
-    let colTextLength = 0;
-    let separator = "\n----------\n";
-    let currentColumn;
+
     // make ajax request
     $.get(
       searchUrl(searchCardName, searchCardType, searchCardColor, page),
       function (data) {
         // loop through the cards and append to the table
         $.each(data.cards, function (index, card) {
-          let power = typeof card.power !== "undefined" ? card.power : "x";
-          let toughness =
+          var power = typeof card.power !== "undefined" ? card.power : "x";
+          var toughness =
             typeof card.toughness !== "undefined" ? card.toughness : "x";
-
-          let cardText =
-            "#" +
-            card.number +
-            " " +
-            card.name +
-            " " +
-            card.manaCost +
-            "\n" +
-            card.type +
-            " " +
-            power +
-            "/" +
-            toughness +
-            "\n" +
-            card.text;
-
-          if (colTextLength + cardText.length + separator.length > 1500) {
-            // Make a new column!
-            colTextLength = 0;
-          }
-
-          if (colTextLength == 0) {
-            // create new coloumn, point to new column for text.
-            currentColumn = document.createElement("div");
-            currentColumn.classList.add("col");
-            currentColumn.style.whiteSpace="pre-line";
-            document.getElementById("results-row").appendChild(currentColumn);
-          } else {
-            // we can fit in current column, add a separateor before the card text..
-            cardText = separator + cardText;
-          }
-
-          let cardTextNode = document.createTextNode(cardText);
-          currentColumn.appendChild(cardTextNode);
-          colTextLength = colTextLength + cardText.length;
+          $("#results tbody").append(
+            "<tr><td>#" +
+              card.number +
+              "</td><td>" +
+              card.name +
+              "</td><td>" +
+              card.manaCost +
+              "</td><td>" +
+              card.colors +
+              "</td><td>" +
+              card.type +
+              "</td><td>" +
+              power +
+              "/" +
+              toughness +
+              "</td><td style='white-space: pre-wrap'>" +
+              card.text +
+              "</td></tr>"
+          );
         });
       }
     );
